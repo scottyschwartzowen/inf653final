@@ -9,6 +9,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 
+// import connect
+const connectDB = require('./config/dbConn.js');
+
 // import models
 const State = require("./models/States.js");
 
