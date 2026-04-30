@@ -1,9 +1,24 @@
 const State = require("../models/State.js");
+const statesData = require("../models/statesData.json");
 
-const getStates = async (req, res) => {
+const getAllStates = async (req, res) => {
   try {
-    const states = await State.find({});
-    res.status(200).json(states);
+    // pulls all MongoDB docs
+    const mongoDox = await State.find({});
+
+    //iterates all 50 states from json
+    const merged = statesData.map((state) => {
+      // match to mongo doc state codes
+      const mongoState = mongoDox.find((doc) => doc.stateCode === state.code);
+
+      // only attach funfacts if exists
+      if (mongoState?.funfacts?.length > 0) {
+        // spread operator of json fields
+        return { ...state, funfacts: mongoState.funfacts };
+      }
+      return state;
+    });
+    res.status(200).json(merged);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -59,7 +74,7 @@ const deleteState = async (req, res) => {
 };
 
 module.exports = {
-  getStates,
+  getAllStates,
   getState,
   createState,
   updateState,
