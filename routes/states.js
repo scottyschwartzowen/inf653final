@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const State = require("../models/States.js");
+const State = require("../models/State.js");
 const {
   getStates,
   getState,

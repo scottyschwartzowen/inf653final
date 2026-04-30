@@ -10,10 +10,10 @@ const mongoose = require("mongoose");
 const app = express();
 
 // import connect
-const connectDB = require('./config/dbConn.js');
+const connectDB = require("./config/dbConn.js");
 
 // import models
-const State = require("./models/States.js");
+const State = require("./models/State.js");
 
 // import routes
 const stateRoute = require("./routes/states.js");

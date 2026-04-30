@@ -1,4 +1,4 @@
-const State = require("../models/States.js");
+const State = require("../models/State.js");
 
 const getStates = async (req, res) => {
   try {
