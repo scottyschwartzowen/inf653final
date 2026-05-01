@@ -111,6 +111,29 @@ const getFunFact = async (req, res) => {
   }
 };
 
+const getCapital = async (req, res) => {
+  try {
+    // get state code and uppercase it
+    const stateCode = req.params.state.toUpperCase();
+
+    // find the state in the json data
+    const foundState = statesData.find((s) => s.code === stateCode);
+
+    // if not found
+    if (!foundState) {
+      return res
+        .status(404)
+        .json({ message: "Invalid state abbreviation parameter" });
+    }
+    // if found
+    res
+      .status(200)
+      .json({ state: foundState.state, capital: foundState.capital_city });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 /* POST */
 const createFunFact = async (req, res) => {
   try {
@@ -241,6 +264,7 @@ module.exports = {
   getAllStates,
   getState,
   getFunFact,
+  getCapital,
   createFunFact,
   updateFunFact,
   deleteFunFact,
