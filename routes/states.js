@@ -5,15 +5,15 @@ const State = require("../models/State.js");
 const {
   getAllStates,
   getState,
-  createState,
-  updateState,
-  deleteState,
+  createFunFact,
+  updateFunFact,
+  deleteFunFact,
 } = require("../controllers/statesController.js");
 
 router.get("/", getAllStates);
 router.get("/:state", getState);
-router.post("/", createState);
-router.put("/:state", updateState);
-router.delete("/:state", deleteState);
+router.post("/:state/funfact", createFunFact);
+router.put("/:state/funfact", updateFunFact);
+router.delete("/:state/funfact", deleteFunFact);
 
 module.exports = router;

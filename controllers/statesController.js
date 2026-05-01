@@ -1,6 +1,7 @@
 const State = require("../models/State.js");
 const statesData = require("../statesData.json");
 
+/* GET */
 const getAllStates = async (req, res) => {
   try {
     // pulls all MongoDB docs
@@ -73,16 +74,34 @@ const getState = async (req, res) => {
   }
 };
 
-const createState = async (req, res) => {
+/* POST */
+const createFunFact = async (req, res) => {
   try {
-    const state = await State.create(req.body);
-    res.status(200).json(state);
+    // get state code and uppercase it
+    const stateCode = req.params.state.toUpperCase();
+
+    if (!req.body.funfacts || !Array.isArray(req.body.funfacts)) {
+      return res
+        .status(400)
+        .json({ message: "State fun facts value must be an array" });
+    }
+
+    // add funfacts to MongoDB
+    const updatedState = await State.findOneAndUpdate(
+      { stateCode: stateCode },
+      { $push: { funfacts: { $each: req.body.funfacts } } },
+      { new: true, upsert: true },
+    );
+
+    // return updated state
+    res.status(200).json(updatedState);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-const updateState = async (req, res) => {
+/* PATCH */
+const updateFunFact = async (req, res) => {
   try {
     const { id } = req.params;
     const state = await State.findByIdAndUpdate(id, req.body);
@@ -98,7 +117,7 @@ const updateState = async (req, res) => {
   }
 };
 
-const deleteState = async (req, res) => {
+const deleteFunFact = async (req, res) => {
   try {
     const { id } = req.params;
     const state = await State.findByIdAndDelete(id);
@@ -115,7 +134,7 @@ const deleteState = async (req, res) => {
 module.exports = {
   getAllStates,
   getState,
-  createState,
-  updateState,
-  deleteState,
+  createFunFact,
+  updateFunFact,
+  deleteFunFact,
 };
