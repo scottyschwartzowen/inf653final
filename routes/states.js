@@ -11,9 +11,9 @@ const {
 } = require("../controllers/statesController.js");
 
 router.get("/", getAllStates);
-router.get("/:id", getState);
+router.get("/:state", getState);
 router.post("/", createState);
-router.put("/:id", updateState);
-router.delete("/:id", deleteState);
+router.put("/:state", updateState);
+router.delete("/:state", deleteState);
 
 module.exports = router;

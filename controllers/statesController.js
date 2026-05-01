@@ -1,5 +1,5 @@
 const State = require("../models/State.js");
-const statesData = require("../models/statesData.json");
+const statesData = require("../statesData.json");
 
 const getAllStates = async (req, res) => {
   try {
@@ -19,7 +19,7 @@ const getAllStates = async (req, res) => {
       return state;
     });
 
-    // check contig query param (using req.query) - true
+    // check contig query param (using req.query) = true
     if (req.query.contig === "true") {
       const contiguous = merged.filter(
         (state) => state.code !== "AK" && state.code !== "HI",
@@ -27,7 +27,7 @@ const getAllStates = async (req, res) => {
       return res.status(200).json(contiguous);
     }
 
-    // check noncontig query param (using req.query) - false
+    // check noncontig query param (using req.query) = false
     if (req.query.contig === "false") {
       const noncontiguous = merged.filter(
         (state) => state.code === "AK" || state.code === "HI",
@@ -43,9 +43,31 @@ const getAllStates = async (req, res) => {
 
 const getState = async (req, res) => {
   try {
-    const { id } = req.params;
-    const state = await State.findById(id);
-    res.status(200).json(state);
+    // get state code and uppercase it
+    const stateCode = req.params.state.toUpperCase();
+
+    // find the state in the json data
+    const foundState = statesData.find((s) => s.code === stateCode);
+
+    // if not found
+    if (!foundState) {
+      return res
+        .status(404)
+        .json({ message: "Invalid state abbreviation parameter" });
+    }
+
+    // check MongoDB for funfacts to find single document
+    const mongoState = await State.findOne({ stateCode: stateCode });
+
+    // if yes, merge and return
+    if (mongoState?.funfacts?.length > 0) {
+      return res
+        .status(200)
+        .json({ ...foundState, funfacts: mongoState.funfacts });
+    }
+
+    // otherwise return JSON data without funfacts
+    res.status(200).json(foundState);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
