@@ -18,6 +18,23 @@ const getAllStates = async (req, res) => {
       }
       return state;
     });
+
+    // check contig query param (using req.query) - true
+    if (req.query.contig === "true") {
+      const contiguous = merged.filter(
+        (state) => state.code !== "AK" && state.code !== "HI",
+      );
+      return res.status(200).json(contiguous);
+    }
+
+    // check noncontig query param (using req.query) - false
+    if (req.query.contig === "false") {
+      const noncontiguous = merged.filter(
+        (state) => state.code === "AK" || state.code === "HI",
+      );
+      return res.status(200).json(noncontiguous);
+    }
+
     res.status(200).json(merged);
   } catch (error) {
     res.status(500).json({ message: error.message });
