@@ -80,6 +80,7 @@ const createFunFact = async (req, res) => {
     // get state code and uppercase it
     const stateCode = req.params.state.toUpperCase();
 
+    // check for no funfacts or no array
     if (!req.body.funfacts || !Array.isArray(req.body.funfacts)) {
       return res
         .status(400)
@@ -90,7 +91,7 @@ const createFunFact = async (req, res) => {
     const updatedState = await State.findOneAndUpdate(
       { stateCode: stateCode },
       { $push: { funfacts: { $each: req.body.funfacts } } },
-      { new: true, upsert: true },
+      { returnDocument: "after", upsert: true },
     );
 
     // return updated state
