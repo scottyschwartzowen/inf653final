@@ -8,6 +8,7 @@ const {
   getFunFact,
   getCapital,
   getNickname,
+  getPopulation,
   createFunFact,
   updateFunFact,
   deleteFunFact,
@@ -18,6 +19,7 @@ router.get("/:state", getState);
 router.get("/:state/funfact", getFunFact);
 router.get("/:state/capital", getCapital);
 router.get("/:state/nickname", getNickname);
+router.get("/:state/population", getPopulation);
 router.post("/:state/funfact", createFunFact);
 router.patch("/:state/funfact", updateFunFact);
 router.delete("/:state/funfact", deleteFunFact);
