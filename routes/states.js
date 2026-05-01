@@ -15,7 +15,7 @@ router.get("/", getAllStates);
 router.get("/:state", getState);
 router.get("/:state/funfact", getFunFact);
 router.post("/:state/funfact", createFunFact);
-router.put("/:state/funfact", updateFunFact);
+router.patch("/:state/funfact", updateFunFact);
 router.delete("/:state/funfact", deleteFunFact);
 
 module.exports = router;

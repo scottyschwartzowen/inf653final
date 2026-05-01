@@ -104,7 +104,7 @@ const getFunFact = async (req, res) => {
 
     // otherwise no funfacts found for this state
     res
-      .status(200)
+      .status(404)
       .json({ message: `No Fun Facts found for ${foundState.state}` });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -141,20 +141,53 @@ const createFunFact = async (req, res) => {
 /* PATCH */
 const updateFunFact = async (req, res) => {
   try {
-    const { id } = req.params;
-    const state = await State.findByIdAndUpdate(id, req.body);
+    // get state code and uppercase it
+    const stateCode = req.params.state.toUpperCase();
 
-    if (!state) {
-      return res.status(404).json({ message: "State not found" });
+    // destructure the body
+    const { index, funfact } = req.body;
+
+    // validate both body properties
+    if (!index) {
+      return res
+        .status(400)
+        .json({ message: "State fun fact index value required" });
     }
-    // re-check update success in database
-    const updatedState = await State.findById(id);
+    if (!funfact) {
+      return res.status(400).json({ message: "State fun fact value required" });
+    }
+
+    // find the state in the json data
+    const foundState = statesData.find((s) => s.code === stateCode);
+    if (!foundState) {
+      return res
+        .status(404)
+        .json({ message: "Invalid state abbreviation parameter" });
+    }
+
+    // check MongoDB for funfacts single document
+    const mongoState = await State.findOne({ stateCode });
+    if (!mongoState?.funfacts?.length) {
+      return res
+        .status(404)
+        .json({ message: `No Fun Facts found for ${foundState.state}` });
+    }
+
+    // adjust the index from 1-based to 0-based
+    const adjustedIndex = index - 1;
+    // update using dot notation
+    const updatedState = await State.findOneAndUpdate(
+      { stateCode },
+      { $set: { [`funfacts.${adjustedIndex}`]: funfact } },
+      { returnDocument: "after" },
+    );
     res.status(200).json(updatedState);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
+/* DELETE */
 const deleteFunFact = async (req, res) => {
   try {
     const { id } = req.params;

@@ -32,37 +32,6 @@ app.get("/", (req, res) => {
   res.send("Hey there!");
 });
 
-// GET (find) All States route
-// app.get('/states', async (req, res) => {
-//   try {
-//     const states = await State.find({});
-//     res.status(200).json(states);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// // GET (findById) Single State route
-// app.get('/states/:id', async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const state = await State.findById(id);
-//     res.status(200).json(state);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// // POST (create) State route
-// app.post('/states', async (req, res) => {
-//   try {
-//     const state = await State.create(req.body);
-//     res.status(200).json(state);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
 // // PUT (findByIdAndUpdate) Single State route
 // app.put('/states/:id', async (req, res) => {
 //   try {
@@ -100,6 +69,11 @@ if (!DATABASE_URI) {
   console.error("Missing DATABASE_URI in .env file");
   process.exit(1);
 }
+
+// catch all if incorrect route (Express v5 version)
+app.all("/{*splat}", (req, res) => {
+  res.status(404).json({ message: "404 Not Found" });
+});
 
 // connect to database & listen for PORT
 mongoose
