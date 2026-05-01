@@ -190,13 +190,48 @@ const updateFunFact = async (req, res) => {
 /* DELETE */
 const deleteFunFact = async (req, res) => {
   try {
-    const { id } = req.params;
-    const state = await State.findByIdAndDelete(id);
+    // get state code and uppercase it
+    const stateCode = req.params.state.toUpperCase();
 
-    if (!state) {
-      return res.status(404).json({ message: "State not found" });
+    // destructure the body
+    const { index } = req.body;
+
+    // validate index properties
+    if (!index) {
+      return res
+        .status(400)
+        .json({ message: "State fun fact index value required" });
     }
-    res.status(200).json({ message: "State deleted successfully" });
+
+    // find the state in the json data
+    const foundState = statesData.find((s) => s.code === stateCode);
+    if (!foundState) {
+      return res
+        .status(404)
+        .json({ message: "Invalid state abbreviation parameter" });
+    }
+
+    // check MongoDB for funfacts single document
+    const mongoState = await State.findOne({ stateCode });
+    if (!mongoState?.funfacts?.length) {
+      return res
+        .status(404)
+        .json({ message: `No Fun Facts found for ${foundState.state}` });
+    }
+
+    // adjust the index from 1-based to 0-based
+    const adjustedIndex = index - 1;
+    // update using 2 step mongoose pattern
+    await State.findOneAndUpdate(
+      { stateCode },
+      { $unset: { [`funfacts.${adjustedIndex}`]: 1 } },
+    );
+    const updatedState = await State.findOneAndUpdate(
+      { stateCode },
+      { $pull: { funfacts: null } },
+      { returnDocument: "after" },
+    );
+    res.status(200).json(updatedState);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
