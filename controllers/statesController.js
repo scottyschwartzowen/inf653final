@@ -74,6 +74,43 @@ const getState = async (req, res) => {
   }
 };
 
+const getFunFact = async (req, res) => {
+  try {
+    // get state code and uppercase it
+    const stateCode = req.params.state.toUpperCase();
+
+    // find the state in the json data
+    const foundState = statesData.find((s) => s.code === stateCode);
+
+    // if not found
+    if (!foundState) {
+      return res
+        .status(404)
+        .json({ message: "Invalid state abbreviation parameter" });
+    }
+
+    // check MongoDB for funfacts to find single document
+    const mongoState = await State.findOne({ stateCode: stateCode });
+
+    // if funfact exists, return random one
+    if (mongoState?.funfacts?.length > 0) {
+      const randomIndex = Math.floor(
+        Math.random() * mongoState.funfacts.length,
+      );
+      return res
+        .status(200)
+        .json({ funfact: mongoState.funfacts[randomIndex] });
+    }
+
+    // otherwise no funfacts found for this state
+    res
+      .status(200)
+      .json({ message: `No Fun Facts found for ${foundState.state}` });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 /* POST */
 const createFunFact = async (req, res) => {
   try {
@@ -135,6 +172,7 @@ const deleteFunFact = async (req, res) => {
 module.exports = {
   getAllStates,
   getState,
+  getFunFact,
   createFunFact,
   updateFunFact,
   deleteFunFact,
