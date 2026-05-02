@@ -1,4 +1,5 @@
 require("dotenv").config();
+const path = require("path");
 
 // define my local port
 const PORT = process.env.PORT || 3500;
@@ -30,11 +31,6 @@ app.use(express.urlencoded({ extended: false }));
 
 /*  ROUTES  */
 app.use("/states", stateRoute);
-
-// http request test
-app.get("/", (req, res) => {
-  res.send("Hey there!");
-});
 
 // check database_uri exists
 if (!DATABASE_URI) {
