@@ -172,12 +172,10 @@ const getPopulation = async (req, res) => {
         .json({ message: "Invalid state abbreviation parameter" });
     }
     // if found
-    res
-      .status(200)
-      .json({
-        state: foundState.state,
-        population: foundState.population.toLocaleString("en-US"),
-      });
+    res.status(200).json({
+      state: foundState.state,
+      population: foundState.population.toLocaleString("en-US"),
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -212,8 +210,15 @@ const createFunFact = async (req, res) => {
     // get state code and uppercase it
     const stateCode = req.params.state.toUpperCase();
 
-    // check for no funfacts or no array
-    if (!req.body.funfacts || !Array.isArray(req.body.funfacts)) {
+    // check for no funfacts
+    if (!req.body.funfacts) {
+      return res
+        .status(400)
+        .json({ message: "State fun facts value required" });
+    }
+
+    // check for no array
+    if (!Array.isArray(req.body.funfacts)) {
       return res
         .status(400)
         .json({ message: "State fun facts value must be an array" });
