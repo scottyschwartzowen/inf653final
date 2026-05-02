@@ -277,11 +277,9 @@ const updateFunFact = async (req, res) => {
     const adjustedIndex = index - 1;
     // check if a funfact exists at that index
     if (!mongoState.funfacts[adjustedIndex]) {
-      return res
-        .status(404)
-        .json({
-          message: `No Fun Fact found at that index for ${foundState.state}`,
-        });
+      return res.status(404).json({
+        message: `No Fun Fact found at that index for ${foundState.state}`,
+      });
     }
 
     // update using dot notation
@@ -330,6 +328,15 @@ const deleteFunFact = async (req, res) => {
 
     // adjust the index from 1-based to 0-based
     const adjustedIndex = index - 1;
+    // check funfacts exists at index
+    if (!mongoState.funfacts[adjustedIndex]) {
+      return res
+        .status(404)
+        .json({
+          message: `No Fun Fact found at that index for ${foundState.state}`,
+        });
+    }
+
     // update using 2 step mongoose pattern
     await State.findOneAndUpdate(
       { stateCode },
