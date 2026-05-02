@@ -14,8 +14,6 @@
 
 - State data and fun facts are merged dynamically at request time, with endpoints for capital cities, nicknames, and contiguous state filtering.
 
-- Dockerized application with a clean Dockerfile
-
 - GitHub source control. Render auto-deploying every push
 
 ## API Endpoints
