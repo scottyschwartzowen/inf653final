@@ -174,7 +174,10 @@ const getPopulation = async (req, res) => {
     // if found
     res
       .status(200)
-      .json({ state: foundState.state, population: foundState.population });
+      .json({
+        state: foundState.state,
+        population: foundState.population.toLocaleString("en-US"),
+      });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
