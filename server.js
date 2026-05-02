@@ -40,7 +40,7 @@ if (!DATABASE_URI) {
 
 // catch all if incorrect route (Express v5 version)
 app.all("/{*splat}", (req, res) => {
-  res.status(404).json({ message: "404 Not Found" });
+  res.status(404).sendFile(path.join(__dirname, "views", "404.html"));
 });
 
 // connect to database & listen for PORT
