@@ -7,11 +7,13 @@ const DATABASE_URI = process.env.DATABASE_URI;
 // essential imports
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const app = express();
 
 // import connect
 const connectDB = require("./config/dbConn.js");
-
+// import cors options
+const corsOptions = require("./config/corsOptions.js");
 // import models
 const State = require("./models/State.js");
 
@@ -19,6 +21,8 @@ const State = require("./models/State.js");
 const stateRoute = require("./routes/states.js");
 
 /*  MIDDLEWARE  */
+// express middleware - CORS
+app.use(cors(corsOptions));
 // express middleware - JSON
 app.use(express.json());
 // express middleware - Form fields (formURLencoded)
@@ -31,38 +35,6 @@ app.use("/states", stateRoute);
 app.get("/", (req, res) => {
   res.send("Hey there!");
 });
-
-// // PUT (findByIdAndUpdate) Single State route
-// app.put('/states/:id', async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const state = await State.findByIdAndUpdate(id, req.body);
-
-//     if (!state) {
-//       return res.status(404).json({ message: 'State not found' });
-//     }
-//     // re-check update success in database
-//     const updatedState = await State.findById(id);
-//     res.status(200).json(updatedState);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// });
-
-// // DELETE (findByIdAndDelete) Single State route
-// app.delete('/states/:id', async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const state = await State.findByIdAndDelete(id);
-
-//     if (!state) {
-//       return res.status(404).json({ message: 'State not found' });
-//     }
-//     res.status(200).json({ message: 'State deleted successfully' });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// });
 
 // check database_uri exists
 if (!DATABASE_URI) {
